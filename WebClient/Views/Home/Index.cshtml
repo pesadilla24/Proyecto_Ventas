@@ -1,0 +1,175 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<div class="container">
+    <h2>Listado de Vendedores</h2>
+    <div class="row">
+
+        <table id='tabla' class="table table-hover table-bordered col-md-8">
+            <thead>
+                <tr>
+                    <th>CODIGO</th>
+                    <th>NOMBRE</th>
+                    <th>APELLIDO</th>
+                    <th>IDENTIFICACION</th>
+                    <th>CIUDAD</th>
+                </tr>
+            <thead>
+
+            <tbody></tbody>
+        </table>
+        <div class="col-md-4">
+            <div class="row">
+                <label for="" class="col-md-6">Buscar Vendedor</label>
+                <input type="text" id="txtBuscarVendedor" name="txtBuscarVendedor" class="form-control col-md-6">
+                <button class="btn btn-primary col-md-4" type="button" id="btnBuscarVendedor">Buscar</button>
+            </div>
+            <div class="row">
+                <label for="" class="col-md-6">ID</label>
+                <input type="text" id="txtId" class="form-control col-md-6">
+            </div>
+            <div class="row">
+                <label for="" class="col-md-6">Nombre</label>
+                <input type="text" id="txtNombre" class="form-control col-md-6">
+            </div>
+            <div class="row">
+                <label for="" class="col-md-6">Apellido</label>
+                <input type="text" id="txtApellido" class="form-control col-md-6">
+            </div>
+            <div class="row">
+                <label for="" class="col-md-6">Identificacion</label>
+                <input type="text" id="txtIdentificacion" class="form-control col-md-6">
+            </div>
+            <div class="row">
+                <label for="" class="col-md-6">Ciudad</label>
+                <input type="text" id="txtCiudad" class="form-control col-md-6">
+            </div>
+            <br />
+            <div class="row">
+                <button class="btn btn-success col-md-3" type="button" id="btnInsertar" name="btnInsertar">Insertar</button>
+                <button class="btn btn-success col-md-3" type="button" id="btnModificar">Modificar</button>
+                <button class="btn btn-success col-md-3" type="button" id="btnEliminar">Eliminar</button>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        var url = "http://localhost:52449/api/Vendedors/";
+        function GetVendedores() {
+            var item = "";
+            $("#tabla tbody").html("");
+            $.getJSON(url, function (data) {
+                $.each(data, function (key, value) {
+                    item += "<tr>";
+                    item += "<td>" + value.codigo + "</td>" + "<td>" + value.nombre + "</td>" + "<td>" + value.apellido + "</td>" + "<td>" + value.numero_Identificacion + "</td>" + "<td>" + value.codigo_Ciudad + "</td>";
+
+                    item += "</tr>";
+
+                });
+                $("#tabla tbody").append(item);
+            });
+            // alert("dsd");
+        };
+
+        $(document).ready(function () {
+            GetVendedores();
+        });
+
+        //Buscar
+        function BuscarVendedor(codigo) {
+            url = url + codigo;
+            $.getJSON(url).done(function (data) {
+                $("#txtCodgio").val(data.codigo);
+                $("#txtNombre").val(data.nombre);
+                $("#txtApellido").val(data.apellido);
+                $("#txtIdentificacion").val(data.numero_Identificacion);
+                $("#txtCiudad").val(data.codigo_Ciudad);
+            }).fail(function (error) {
+                $("#txtNombre").val("");
+                $("#txtApellido").val("");
+                $("#txtIdentificacion").val("");
+                $("#txtCiudad").val("");
+            });
+        }
+        $("#btnBuscarVendedor").on("click", function () {
+            BuscarVendedor($("#txtBuscarVendedor").val());
+        });
+
+        $("#btnInsertar").on("click", function () {
+            var objeto = new Object();
+            objeto.nombre = $("#txtNombre").val();
+            objeto.apellido = $("#txtApellido").val();
+            objeto.Numero_Identificacion = $("#txtIdentificacion").val();
+            objeto.codigo_Ciudad = $("#txtCiudad").val();
+
+            InsertarVendedor(JSON.stringify(objeto));
+        });
+
+
+        //Insertar
+        function InsertarVendedor(vendedor) {
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: vendedor,
+                contentType: "application/json",
+                success: function (data) {
+                    TodosVendedores();
+                    $("txtNombre").val("");
+                    $("txtApellido").val("");
+                    $("txtIdentificacion").val("");
+                    $("txtCiudad").val("");
+                },
+                error: function (msg) {
+                    $("#error").text("Error al insertar");
+                }
+            });
+        };
+
+
+        $("#btnModificar").on("click", function () {
+            //alert("sii");
+            var objeto = new Object();
+            objeto.codigo = $("#txtCodigo").val();
+            objeto.nombre = $("#txtNombre").val();
+            objeto.apellido = $("#txtApellido").val();
+            objeto.Identificacion = $("#txtIdentificacion").val();
+            objeto.codigo_Ciudad = $("#txtCiudad").val();
+
+            ModificarVendedor(objeto.codigo,JSON.stringify(objeto));
+        });
+        //Insertar
+        function ModificarVendedor(codigo,vendedor) {
+
+            $.ajax({
+                url: url,
+                type: "PUT",
+                data: vendedor,
+                contentType: "application/json",
+                success: function (data) {
+                    TodosVendedores();
+                    $("error").text("Vendedor modificado");
+                    $("txtNombre").val("");
+                    $("txtApellido").val("");
+                    $("txtIdentificacion").val("");
+                    $("txtCiudad").val("");
+                },
+                error: function (msg) {
+                    $("#error").text("Error al modificar");
+                }
+            });
+
+
+        };
+    </script>
+}
+
+
+
+
+
