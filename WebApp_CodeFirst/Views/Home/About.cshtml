@@ -1,0 +1,12 @@
+﻿@{
+    ViewData["Title"] = "Vendedors";
+}
+<h2>@ViewData["Title"]</h2>
+<h3>@ViewData["Message"]</h3>
+
+<p>Gestion de Vendedores</p>
+
+@using (Html.BeginForm("", "Vendedors"))
+{
+    <input type="submit" value="Create" class="btn btn-default" id="crt" />
+}
